@@ -1,31 +1,8 @@
-import 'styles/globals.css'
-import 'styles/inter.css'
-import 'styles/druk.css'
-import 'styles/montserrat.css'
-import 'styles/open-sans.css'
-import 'styles/playfair-display.css'
-import 'styles/roboto.css'
-import 'styles/chalkboard.css'
-import 'styles/frankruhllibre.css'
-import 'styles/gazpacho.css'
-import 'styles/editorialnew.css'
-import 'styles/lucidagrande.css'
-import 'styles/nunitosans.css'
-import 'styles/styreneb.css'
-import 'styles/gothicusroman.css'
-import 'styles/roobert.css'
-import 'styles/rodger.css'
-import 'styles/ingrammono.css'
+import 'styles/index.css'
+import '@rainbow-me/rainbowkit/styles.css'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
-import {
-  WagmiConfig,
-  createClient,
-  chain,
-  configureChains,
-  allChains,
-  chainId,
-} from 'wagmi'
+import { WagmiConfig } from 'wagmi'
 import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
 import { ThemeProvider, useTheme } from 'next-themes'
@@ -41,22 +18,12 @@ import { FC, useEffect, useState } from 'react'
 import '@rainbow-me/rainbowkit/styles.css'
 
 import {
-  getDefaultWallets,
   RainbowKitProvider,
   darkTheme as rainbowKitDarkTheme,
   lightTheme as rainbowKitLightTheme,
 } from '@rainbow-me/rainbowkit'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { publicProvider } from 'wagmi/providers/public'
-
-// Select a custom ether.js interface for connecting to a network
-// Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
-// OPTIONAL
-const infuraId = process.env.NEXT_PUBLIC_INFURA_ID
-
-// API key for Ethereum node
-// Two popular services are Alchemy (alchemy.com) and Infura (infura.io)
-const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID
+import presetColors from '../colors'
+import { wagmiClient, chains } from 'utils'
 
 const THEME_SWITCHING_ENABLED = process.env.NEXT_PUBLIC_THEME_SWITCHING_ENABLED
 const DARK_MODE_ENABLED = process.env.NEXT_PUBLIC_DARK_MODE
@@ -67,34 +34,11 @@ const FONT_FAMILY = process.env.NEXT_PUBLIC_FONT_FAMILY || 'Inter'
 const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || 'default'
 const DISABLE_POWERED_BY_RESERVOIR =
   process.env.NEXT_PUBLIC_DISABLE_POWERED_BY_RESERVOIR
-import presetColors from '../colors'
 
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 const API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
-const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
-const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
-
-const envChain = allChains.find(
-  (chain) => chain.id === +(CHAIN_ID || chainId.mainnet)
-)
-
-const { chains, provider } = configureChains(
-  envChain ? [envChain] : [chain.mainnet],
-  [alchemyProvider({ apiKey: alchemyId }), publicProvider()]
-)
-
-const { connectors } = getDefaultWallets({
-  appName: SOURCE_NAME || 'Reservoir Market',
-  chains,
-})
-
-const wagmiClient = createClient({
-  autoConnect: true,
-  connectors,
-  provider,
-})
 
 function AppWrapper(props: AppProps & { baseUrl: string }) {
   const defaultTheme = DARK_MODE_ENABLED ? 'dark' : 'light'

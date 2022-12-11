@@ -23,7 +23,7 @@ import {
   lightTheme as rainbowKitLightTheme,
 } from '@rainbow-me/rainbowkit'
 import presetColors from '../colors'
-import { wagmiClient, chains } from 'utils'
+import { wagmiClient, chains } from 'config/clientConfig'
 
 const THEME_SWITCHING_ENABLED = process.env.NEXT_PUBLIC_THEME_SWITCHING_ENABLED
 const DARK_MODE_ENABLED = process.env.NEXT_PUBLIC_DARK_MODE

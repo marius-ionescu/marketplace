@@ -12,27 +12,35 @@ const envChain = allChains.find(
   (chain) => chain.id === +(CHAIN_ID || chainId.mainnet)
 )
 
-export const { chains, provider, webSocketProvider } = configureChains(
-  envChain ? [envChain] : [chain.mainnet],
-  [alchemyProvider({ apiKey: alchemyId }), publicProvider()]
-)
+type ClientConfigOptions = {
+  isDarkMode?: boolean
+}
 
-const { wallets } = getDefaultWallets({
-  appName: SOURCE_NAME || 'Reservoir Market',
-  chains,
-})
+export function getClientConfig({ isDarkMode=false }: ClientConfigOptions) {
+  const { chains, provider, webSocketProvider } = configureChains(
+    envChain ? [envChain] : [chain.mainnet],
+    [alchemyProvider({ apiKey: alchemyId }), publicProvider()]
+  )
 
-const connectors = connectorsForWallets([
-  ...wallets,
-  {
-    groupName: 'New',
-    wallets: [magicWallet({ chains })],
-  },
-])
+  const { wallets } = getDefaultWallets({
+    appName: SOURCE_NAME || 'Reservoir Market',
+    chains,
+  })
 
-export const wagmiClient = createClient({
-  autoConnect: true,
-  connectors,
-  provider,
-  webSocketProvider,
-})
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'New',
+      wallets: [magicWallet({ chains, isDarkMode })],
+    },
+  ])
+
+  const wagmiClient = createClient({
+    autoConnect: true,
+    connectors,
+    provider,
+    webSocketProvider,
+  })
+
+  return { chains, connectors, wagmiClient }
+}

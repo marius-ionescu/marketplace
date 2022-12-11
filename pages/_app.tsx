@@ -23,7 +23,7 @@ import {
   lightTheme as rainbowKitLightTheme,
 } from '@rainbow-me/rainbowkit'
 import presetColors from '../colors'
-import { wagmiClient, chains } from 'config/clientConfig'
+import { getClientConfig } from 'config/clientConfig'
 
 const THEME_SWITCHING_ENABLED = process.env.NEXT_PUBLIC_THEME_SWITCHING_ENABLED
 const DARK_MODE_ENABLED = process.env.NEXT_PUBLIC_DARK_MODE
@@ -70,6 +70,9 @@ const App: FC<AppProps & { baseUrl: string }> = ({
     | undefined
   >()
   const marketplaceTheme = THEME_SWITCHING_ENABLED ? theme : defaultTheme
+  const { wagmiClient, chains } = getClientConfig({
+    isDarkMode: Boolean(DARK_MODE_ENABLED),
+  })
 
   useEffect(() => {
     const primaryColor = (PRIMARY_COLOR as string) || 'default'
